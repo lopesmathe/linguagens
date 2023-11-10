@@ -1,0 +1,113 @@
+
+Create database HotelSaintGermain;
+
+
+use HotelSaintGermain;
+
+
+CREATE TABLE Cliente (
+    IdCliente INT PRIMARY KEY AUTO_INCREMENT,
+    Nome VARCHAR(100) NOT NULL,
+    CPF VARCHAR(11) NOT NULL UNIQUE,
+    sexo char(1),
+    DtaCadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP (),
+    Cidade VARCHAR(20),
+    Uf CHAR(2) DEFAULT 'PR',
+    Pais VARCHAR(20) DEFAULT 'Brasil',
+    Tipo INT CHECK (Tipo IN (1 , 2))
+);
+
+INSERT INTO Cliente (Nome, CPF, sexo, Cidade, Uf, Pais, Tipo)
+VALUES
+('Maria Silva', '12345678901', 'F', 'São Paulo', 'SP', 'Brasil', 1),
+('João Pereira', '98765432101', 'M', 'Rio de Janeiro', 'RJ', 'Brasil', 2),
+('Ana Oliveira', '55555555555', 'F', 'Belo Horizonte', 'MG', 'Brasil', 1),
+('Pedro Souza', '11111111111', 'M', 'Porto Alegre', 'RS', 'Brasil', 2),
+('Luciana Santos', '99999999999', 'F', 'Salvador', 'BA', 'Brasil', 1);
+
+
+CREATE TABLE Telefone (
+    Numero VARCHAR(20),
+    IdCliente INT,
+    PRIMARY KEY (Numero , IdCliente),
+    FOREIGN KEY (IdCliente)
+    REFERENCES Cliente (IdCliente)
+);
+
+INSERT INTO Telefone (Numero, IdCliente) VALUES
+('123-456-7890', 1),
+('987-654-3210', 2),
+('555-555-5555', 3),
+('111-111-1111', 4),
+('999-999-9999', 5);
+
+
+CREATE TABLE Reserva (
+    NroReserva INT PRIMARY KEY,
+    IdCliente INT,
+    DataHora DATETIME NOT NULL,
+    Periodo TINYINT NOT NULL,
+    FOREIGN KEY (IdCliente)
+    REFERENCES Cliente (IdCliente)
+);
+
+INSERT INTO Reserva (NroReserva, IdCliente, DataHora, Periodo) VALUES
+(1, 1, '2023-10-30 10:00:00', 3),
+(2, 2, '2023-11-05 14:30:00', 2),
+(3, 3, '2023-11-10 16:15:00', 5),
+(4, 4, '2023-11-15 12:45:00', 4),
+(5, 5, '2023-11-20 08:00:00', 7);
+
+
+CREATE TABLE Ocupacao (
+    NroReserva INT PRIMARY KEY,
+    Entrada DATETIME,
+    Saida DATETIME,
+    FOREIGN KEY (NroReserva)
+    REFERENCES Reserva (NroReserva)
+);
+
+
+INSERT INTO Ocupacao (NroReserva, Entrada, Saida) VALUES
+(1, '2023-10-30 12:00:00', '2023-11-02 10:00:00'),
+(2, '2023-11-05 15:00:00', '2023-11-07 12:00:00'),
+(3, '2023-11-10 18:00:00', '2023-11-15 09:00:00'),
+(4, '2023-11-15 13:00:00', '2023-11-18 11:00:00'),
+(5, '2023-11-20 10:00:00', '2023-11-25 08:00:00');
+
+
+
+CREATE TABLE Restaurante (
+	IdRestaurante INT PRIMARY KEY,
+	Prato VARCHAR(50), Preco DECIMAL(5,2)
+);
+
+
+INSERT INTO Restaurante (IdRestaurante, Prato, Preco) VALUES
+(1, 'Prato 1', 15.99),
+(2, 'Prato 2', 12.50),
+(3, 'Prato 3', 18.75),
+(4, 'Prato 4', 10.99),
+(5, 'Prato 5', 22.50);
+
+CREATE TABLE OcupacaoRestaurante (
+	NroReserva INT,
+	IdRestaurante INT,
+	DataHora DATETIME,
+	Quantidade TINYINT,
+	PRIMARY KEY (NroReserva, IdRestaurante, DataHora),
+	FOREIGN KEY (NroReserva)
+	REFERENCES Reserva(NroReserva),
+	FOREIGN KEY (IdRestaurante)
+	REFERENCES Restaurante(IdRestaurante)
+);
+
+-- Inserir registros de ocupação de restaurante de exemplo relacionados a reservas e restaurantes existentes
+INSERT INTO OcupacaoRestaurante (NroReserva, IdRestaurante, DataHora, Quantidade) VALUES
+(1, 1, '2023-10-30 18:00:00', 2),
+(2, 2, '2023-11-05 19:30:00', 3),
+(3, 3, '2023-11-10 20:00:00', 4),
+(4, 4, '2023-11-15 19:00:00', 2),
+(5, 5, '2023-11-20 21:00:00', 5);
+
+
