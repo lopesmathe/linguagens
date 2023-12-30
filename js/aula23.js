@@ -5,4 +5,4 @@ function soma(...valores){
 return res
 }
 
-console.log(soma(10,12,12))
+console.log(soma(10,12,12,100))
